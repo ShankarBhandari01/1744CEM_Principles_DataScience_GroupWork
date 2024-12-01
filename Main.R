@@ -1,5 +1,5 @@
 # List of required libraries
-required_packages <- c("tidyverse", "GGally", "ggfortify", "cluster")
+required_packages <- c("tidyverse", "GGally", "ggfortify", "cluster","ggpubr","factoextra")
 # Load all libraries
 lapply(required_packages, library, character.only = TRUE)
 # importing data
@@ -47,43 +47,56 @@ variance_explained = pca$sdev/sum(pca$sdev^2)
 variance_explained
 
 #scree
-ggplot(NULL,aes(x=1:12,y=100*variance_explained)) +
-  geom_col()
-
-#“biplot”
-autoplot(pca,
-         x=1,y=2,
-         label=TRUE, label.size=3, shape=FALSE,
-         loadings=TRUE, loadings.label=TRUE)
+fviz_screeplot(pca, addlabels = TRUE, barfill = "blue", barcolor = "black") +
+  ggtitle("Scree Plot")
 
 
-# Biplot using the first two principal components
-biplot(pca, main = "PCA Biplot (PC1 vs PC2)", col = c("blue", "red"))
+
+# Biplot with highlighted countries
+fviz_pca_biplot(
+  pca,
+  axes = c(1, 2),
+  geom.ind = "point",        # Points for individuals  
+  palette = c("grey"), # Colors for groups
+  addEllipses = TRUE,        # Add confidence ellipses
+  label = "var",             # Label variables only
+  repel = TRUE              # Avoid text overlapping
+) 
 
 
 
 # PCA loadings plot
-loadings = as.data.frame(pca$rotation[,1:5])
+loadings = as.data.frame(pca$rotation[,1:4])
 loadings$Symbol = row.names(loadings)
 loadings = gather(loadings, key='Component', value='Weight', -Symbol)
 ggplot(loadings, aes(x=Symbol,y=Weight)) +
   geom_bar(stat='identity') +
   facet_grid(Component~.)
-# produce and interpret a biplot using PC2 and PC3 as the axes.
 
 #“biplot”
-autoplot(pca,
-         x=2,y=3,
-         label=TRUE, label.size=3, shape=FALSE,
-         loadings=TRUE, loadings.label=TRUE)
+fviz_pca_biplot(
+  pca,
+  axes = c(2, 3),
+  geom.ind = "point",        # Points for individuals
+  palette = c("grey"), # Colors for groups
+  addEllipses = TRUE,        # Add confidence ellipses
+  label = "var",             # Label variables only
+  repel = TRUE              # Avoid text overlapping
+) +
+  ggtitle("PCA Biplot with Highlighted Outliers")
+
 
 
 
 # Scatter matrix including PCs
-radio_plus = data_pca %>%
+pca_plus = data_pca %>%
   mutate(PC1=pca$x[,1],
          PC2=pca$x[,2],
          PC3=pca$x[,3]) %>%
   relocate(PC1,PC2,PC3)
-ggpairs(radio_plus)
+ggpairs(pca_plus)
+
+
+
+
 
