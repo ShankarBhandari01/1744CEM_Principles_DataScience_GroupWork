@@ -1,5 +1,5 @@
 # List of required libraries
-required_packages <- c("tidyverse", "GGally", "ggfortify", "cluster","ggpubr")
+required_packages <- c("tidyverse", "GGally", "ggfortify", "cluster")
 # Load all libraries
 lapply(required_packages, library, character.only = TRUE)
 # importing data
