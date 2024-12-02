@@ -83,7 +83,7 @@ fviz_pca_biplot(
   label = "var",             # Label variables only
   repel = TRUE              # Avoid text overlapping
 ) +
-  ggtitle("PCA Biplot with Highlighted Outliers")
+  ggtitle("PCA Biplot")
 
 
 
@@ -94,7 +94,7 @@ pca_plus = data_pca %>%
          PC2=pca$x[,2],
          PC3=pca$x[,3]) %>%
   relocate(PC1,PC2,PC3)
-ggpairs(data_pca)
+ggpairs(pca_plus,)
 
 
 
@@ -115,7 +115,7 @@ pca_without_pillar1 <- prcomp(data_without_pillar1[, -1], scale = TRUE)
 summary(pca_without_pillar1)
 
 # Scree Plot
-fviz_screeplot(pca_without_pillar1, addlabels = TRUE)
+fviz_screeplot(pca_without_pillar1, addlabels = TRUE,barfill = "blue", barcolor = "black")
 
 # Biplot for first two PCs
 fviz_pca_biplot(pca_without_pillar1, axes = c(1, 2), label = "var", addEllipses = TRUE)
@@ -134,9 +134,9 @@ dissimilarity_manhattan <- dist(scale(data_pca), method = "manhattan")
 
 # hierarchical clustering methods
 cluster_results_manhattan_ward <- agnes(dissimilarity_manhattan, method = "ward")
-cat("Agglomerative Coefficient: ", cluster_results_manhattan_ward$ac, "\n")
+cat("Agglomerative Coefficient manhattan_ward: ", cluster_results_manhattan_ward$ac, "\n")
 cluster_results_manhattan_single <- agnes(dissimilarity_manhattan, method = "single")
-cat("Agglomerative Coefficient: ", cluster_results_manhattan_single$ac, "\n")
+cat("Agglomerative Coefficient manhattan_single: ", cluster_results_manhattan_single$ac, "\n")
 
 # plot cluster using ward methods
 plot(cluster_results_manhattan_ward, which.plots=2)
@@ -154,9 +154,9 @@ dissimilarity_euclidean <- dist(scale(data_pca), method = "euclidean")
 
 # hierarchical clustering methods
 cluster_results_euclidean_ward <- agnes(dissimilarity_euclidean, method = "ward")
-cat("Agglomerative Coefficient: ", cluster_results_euclidean_ward$ac, "\n")
+cat("Agglomerative Coefficient euclidean_ward: ", cluster_results_euclidean_ward$ac, "\n")
 cluster_results_euclidean_single <- agnes(dissimilarity_manhattan, method = "single")
-cat("Agglomerative Coefficient: ", cluster_results_euclidean_single$ac, "\n")
+cat("Agglomerative Coefficient euclidean_single: ", cluster_results_euclidean_single$ac, "\n")
 
 
 # cluster with ward methods
@@ -170,7 +170,7 @@ rect.hclust(cluster_results_euclidean_single, k=4)
 cutree(cluster_results_euclidean_single, k=4)
 
 # Create a data frame to summarize the results
-comparison_table <- data.frame(
+comparison_table_row <- data.frame(
   Distance = c("Euclidean", "Manhattan", "Euclidean", "Manhattan"),
   Method = c("Ward", "Ward", "Single", "Single"),
   Agglomerative_Coefficient = c(
@@ -182,7 +182,7 @@ comparison_table <- data.frame(
 )
 
 # Print the comparison table
-print(comparison_table)
+print(comparison_table_row)
 
 
 # Cluster the variables using manhattan with ward method cluster methods
