@@ -13,7 +13,7 @@ glimpse(data)
 cleaned_data = na.omit(data)
 
 # Sorting Overall_Score from highest to lowest
-cleaned_data<- cleaned_data %>%
+cleaned_data <- cleaned_data %>%
               arrange(desc(Overall_Score))
 
 # data type
@@ -49,12 +49,10 @@ pillar_data_scaled
 pca_result <- prcomp(pillar_data_scaled, scale. = TRUE)
 summary(pca_result)
 
+
 # Calculation of each PCA variance 
 variance = pca_result$sdev^2 / sum(pca_result$sdev^2)
-variance
-
-# Extract eigenvalues/variances
-get_eig(pca_result)
+print(variance)
 
 
 #---> Step 3: Visualizations using Scree plot (X = 1 to 12 pillar) <-----
@@ -73,8 +71,10 @@ fviz_screeplot(pca_result, addlabels = TRUE, ylim = c(0, 60))
 #----> PCA bi-plot-------------------------------------------------------
 #========================================================================
 autoplot(pca_result,
-         label=TRUE, label.size=3, shape=FALSE,
-         loadings=TRUE, loadings.label=TRUE)
+         label=TRUE, label.size=3,
+         shape=FALSE, loadings=TRUE,
+         loadings.label=TRUE
+        )
 
 
 #-------- PCA bi-plot of 12 pillar variables using factoextra library
@@ -91,7 +91,7 @@ fviz_pca_biplot(pca_result,
 #----->  PCA loading plot of 12 pillar variables  -----------------------
 #========================================================================
 
-loadings = as.data.frame(pca_result$rotation[,1:3])
+loadings = as.data.frame(pca_result$rotation[,1:4])
 loadings$Symbol = row.names(loadings)
 loadings = gather(loadings, key='Component', value='Weight', -Symbol)
 
@@ -99,8 +99,18 @@ ggplot(loadings, aes(x=Symbol,y=Weight)) +
   geom_bar(stat='identity') + 
   facet_grid(Component~.)
 
+#pc2 and pc3 biplot
+fviz_pca_biplot(pca_result, 
+                repel = TRUE, 
+                axex=c(2,3),
+                geom.ind = "point", 
+                label ="var", 
+                addEllipses = TRUE,  
+                palette = c("grey")
+                )
 
-#---------> part B ------------------------------------------------------
+
+#----------------------> part B -----------------------------------------
 #========================================================================
 #filtration and removing outlier from the cleaned data sets 
 #----------- it is because 175 and 176 are far from the group of data 
